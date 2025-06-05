@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('final')
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -16,8 +19,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Directly use 'docker-hub-credentials' in withDockerRegistry
-                    withDockerRegistry(registryCredentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
                         docker.image('anujpawadia0125/flask-app:latest').push()
                     }
                 }
