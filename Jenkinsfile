@@ -1,18 +1,12 @@
 pipeline {
     agent any
-    
-    // Remove this line since we're not using environment variables for credentials
-    // environment {
-    //     DOCKERHUB_CREDENTIALS = credentials('final')  // This is incorrect
-    // }
-    
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/AnujPawaadia/flask-app'
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -20,7 +14,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -31,7 +25,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to Minikube') {
             steps {
                 echo 'Minikube deployment is manual. Run locally:'
