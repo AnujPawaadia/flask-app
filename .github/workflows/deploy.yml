@@ -31,9 +31,8 @@ jobs:
 
     - name: Deploy to Minikube
       run: |
-        # Note: Minikube must be running locally or in a controlled environment.
-        # For GitHub Actions, this step assumes Minikube is accessible or skipped.
-        # For local testing, apply these manually after pushing the image.
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        kubectl wait --for=condition=ready pod -l app=flask-app --timeout=60s
+        # Note: Minikube deployment is manual since GitHub Actions cannot access local Minikube.
+        # Run these commands locally after the image is pushed:
+        # kubectl apply -f deployment.yaml
+        # kubectl apply -f service.yaml
+        # kubectl wait --for=condition=ready pod -l app=flask-app --timeout=60s
