@@ -1,14 +1,18 @@
 pipeline {
     agent any
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('final')
-    }
+    
+    // Remove this line since we're not using environment variables for credentials
+    // environment {
+    //     DOCKERHUB_CREDENTIALS = credentials('final')  // This is incorrect
+    // }
+    
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/AnujPawaadia/flask-app'
             }
         }
+        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -16,15 +20,18 @@ pipeline {
                 }
             }
         }
+        
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                    // Use the correct credential ID 'docker-password'
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-password') {
                         docker.image('anujpawadia0125/flask-app:latest').push()
                     }
                 }
             }
         }
+        
         stage('Deploy to Minikube') {
             steps {
                 echo 'Minikube deployment is manual. Run locally:'
