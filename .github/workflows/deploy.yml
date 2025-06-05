@@ -1,4 +1,4 @@
-name: Deploy Flask App to AKS
+name: Deploy Flask App to Minikube
 
 on:
   push:
@@ -29,29 +29,11 @@ jobs:
         push: true
         tags: anujpawadia0125/flask-app:latest
 
-    - name: Log in to Azure
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        enable-AzPSSession: false
-
-    - name: Set up kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'latest'
-
-    - name: Deploy to AKS
-      env:
-        KUBECONFIG: ${{ secrets.AKS_KUBECONFIG }}
+    - name: Deploy to Minikube
       run: |
-        mkdir -p $HOME/.kube
-        echo "$KUBECONFIG" > $HOME/.kube/config
+        # Note: Minikube must be running locally or in a controlled environment.
+        # For GitHub Actions, this step assumes Minikube is accessible or skipped.
+        # For local testing, apply these manually after pushing the image.
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
         kubectl wait --for=condition=ready pod -l app=flask-app --timeout=60s
-        # Verify deployment
-        kubectl get deployments --namespace default
-        kubectl describe deployment flask-app --namespace default
-        kubectl logs -l app=flask-app
