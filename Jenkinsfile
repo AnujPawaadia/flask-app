@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub-credentials')
-        IMAGE_NAME = 'anujpawadia0125/flask-app:latest'
-    }
     stages {
         stage('Checkout') {
             steps {
@@ -13,23 +9,23 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(env.IMAGE_NAME)
+                    docker.build('anujpawadia0125/flask-app:latest')
                 }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    def image = docker.image(env.IMAGE_NAME)
-                    docker.withRegistry('https://index.docker.io/v1/', env.DOCKERHUB_CREDENTIALS) {
-                        image.push()
+                    // Directly use 'docker-hub-credentials' in withDockerRegistry
+                    withDockerRegistry(registryCredentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/') {
+                        docker.image('anujpawadia0125/flask-app:latest').push()
                     }
                 }
             }
         }
         stage('Deploy to Minikube') {
             steps {
-                echo '⚠️ Minikube deployment must be done manually. Run locally:'
+                echo 'Minikube deployment is manual. Run locally:'
                 echo 'kubectl apply -f deployment.yaml'
                 echo 'kubectl apply -f service.yaml'
                 echo 'kubectl wait --for=condition=ready pod -l app=flask-app --timeout=60s'
